@@ -1,0 +1,25 @@
+{
+  "name": "ACERVO - Gestão de Camisas",
+  "short_name": "ACERVO",
+  "description": "Catálogo, lista de desejos e gestão da sua coleção de camisas de futebol.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f1712",
+  "theme_color": "#1B3B2B",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
