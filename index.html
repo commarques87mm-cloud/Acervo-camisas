@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ACERVO - Gestão de Camisas</title>
+    <meta name="theme-color" content="#1B3B2B">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ACERVO">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="apple-touch-icon" href="./icon-192.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -28,9 +34,6 @@
             <button type="button" onclick="mudarAba('desejos')" class="px-2.5 py-2 rounded-xl bg-[#254837] hover:bg-[#2d5743] text-[#C8E84B] text-xs font-bold">
                 Desejos
             </button>
-            <button type="button" onclick="mudarAba('nova')" class="px-2.5 py-2 rounded-xl bg-[#C8E84B] hover:bg-white text-[#1B3B2B] text-xs font-extrabold">
-                + Nova
-            </button>
             <button type="button" onclick="mudarAba('usuario')" class="px-2.5 py-2 rounded-xl bg-[#254837] hover:bg-[#2d5743] text-white text-xs font-bold">
                 Usuário
             </button>
@@ -41,7 +44,7 @@
     </header>
 
     <!-- Conteúdo Principal -->
-    <main class="flex-1 max-w-xl w-full mx-auto p-4 pb-24">
+    <main class="flex-1 max-w-xl w-full mx-auto p-4 pb-28">
 
         <!-- Aviso -->
         <div id="boxStatus" class="hidden mb-4 bg-amber-950/70 border border-amber-500/50 text-amber-200 rounded-2xl p-3.5 text-xs"></div>
@@ -88,79 +91,14 @@
                 <input type="text" id="inputBuscaDesejos" oninput="filtrarDesejos()" placeholder="Buscar desejo por clube, ano ou fornecedora..." class="w-full bg-[#0f1712] border border-[#2d5743] rounded-2xl px-4 py-3 text-sm text-white placeholder-zinc-400 focus:outline-none focus:border-[#C8E84B]">
             </div>
 
-            <form id="formDesejo" onsubmit="salvarDesejo(event)" class="bg-[#163022] border border-[#2d5743] rounded-3xl p-5 shadow-xl space-y-4">
-                <div class="border-b border-[#2d5743] pb-2">
-                    <h3 class="font-bold text-white text-base">Adicionar Camisa Desejada</h3>
-                    <p class="text-xs text-zinc-300">Camisas aqui não entram na contagem da coleção real.</p>
-                </div>
-
-                <div onclick="document.getElementById('fileInputDesejo').click()" class="border-2 border-dashed border-[#2d5743] hover:border-[#C8E84B] rounded-2xl p-4 text-center cursor-pointer bg-[#0f1712]/50 min-h-[115px] flex flex-col items-center justify-center">
-                    <input type="file" id="fileInputDesejo" accept="image/*" class="hidden" onchange="processarFotoDesejo(event)">
-                    <div id="previewDesejo" class="flex flex-col items-center gap-1">
-                        <span class="text-xs font-bold text-[#C8E84B]">Foto de Referência (Opcional)</span>
-                        <span class="text-[11px] text-zinc-400">Toque para escolher ou identificar com IA</span>
-                    </div>
-                </div>
-
-                <div id="statusIADesejo" class="hidden bg-[#254837] border border-[#C8E84B]/30 rounded-2xl p-2.5 text-center text-xs text-[#C8E84B]"></div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs text-zinc-300 mb-1">Clube / Seleção *</label>
-                        <input type="text" id="wish_team_name" required placeholder="Ex: São Paulo FC" class="w-full bg-[#0f1712] border border-[#2d5743] rounded-xl px-3 py-2.5 text-sm text-white">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-zinc-300 mb-1">Temporada / Ano *</label>
-                        <input type="text" id="wish_season" required placeholder="Ex: 1993" class="w-full bg-[#0f1712] border border-[#2d5743] rounded-xl px-3 py-2.5 text-sm text-white">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs text-zinc-300 mb-1">Modelo / Tipo</label>
-                        <select id="wish_kit_type" class="w-full bg-[#0f1712] border border-[#2d5743] rounded-xl px-3 py-2.5 text-sm text-white">
-                            <option value="Titular">Titular (Home)</option>
-                            <option value="Reserva">Reserva (Away)</option>
-                            <option value="Terceira">Terceira (Third)</option>
-                            <option value="Especial">Especial / Goleiro</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-zinc-300 mb-1">Fornecedora / Marca</label>
-                        <input type="text" id="wish_supplier" placeholder="Ex: Penalty, Adidas" class="w-full bg-[#0f1712] border border-[#2d5743] rounded-xl px-3 py-2.5 text-sm text-white">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs text-zinc-300 mb-1">Tamanho Desejado</label>
-                        <select id="wish_size" class="w-full bg-[#0f1712] border border-[#2d5743] rounded-xl px-3 py-2.5 text-sm text-white">
-                            <option value="P">P</option>
-                            <option value="M">M</option>
-                            <option value="G" selected>G</option>
-                            <option value="GG">GG</option>
-                            <option value="XG">XG</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-zinc-300 mb-1">Valor-Alvo (R$)</label>
-                        <input type="number" step="0.01" id="wish_target_value" value="300.00" class="w-full bg-[#0f1712] border border-[#2d5743] rounded-xl px-3 py-2.5 text-sm text-white">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs text-zinc-300 mb-1">Observações do Garimpo</label>
-                    <input type="text" id="wish_notes" placeholder="Ex: Mangas longas, patrocinador específico, faixa de preço..." class="w-full bg-[#0f1712] border border-[#2d5743] rounded-xl px-3 py-2.5 text-sm text-white">
-                </div>
-
-                <button type="submit" id="btnSalvarDesejo" class="w-full bg-[#C8E84B] hover:bg-white text-[#1B3B2B] font-extrabold py-3.5 rounded-2xl transition text-sm">
-                    Salvar na Lista de Desejos
-                </button>
-            </form>
-
             <div class="flex items-center justify-between">
                 <h3 class="font-bold text-sm text-zinc-200 uppercase">Camisas na Mira</h3>
-                <span id="contadorDesejos" class="text-xs text-zinc-400">Exibindo 0 itens</span>
+                <div class="flex items-center gap-2">
+                    <span id="contadorDesejos" class="text-xs text-zinc-400">Exibindo 0 itens</span>
+                    <button type="button" onclick="abrirNovoCadastroParaDesejo()" class="px-3 py-1.5 rounded-xl bg-[#C8E84B] hover:bg-white text-[#1B3B2B] text-xs font-extrabold">
+                        + Novo Desejo
+                    </button>
+                </div>
             </div>
 
             <div id="gridDesejos" class="space-y-3">
@@ -170,22 +108,38 @@
             </div>
         </div>
 
-        <!-- ABA NOVA CAMISA -->
+        <!-- ABA NOVA CAMISA / DESEJO (CADASTRO UNIFICADO) -->
         <div id="abaNova" class="space-y-5 hidden">
             <div class="bg-[#163022] border border-[#2d5743] rounded-3xl p-5 shadow-xl space-y-4">
-                <h3 class="font-bold text-white text-base">Cadastrar com Reconhecimento IA</h3>
-                <p class="text-xs text-zinc-300">Envie a foto da <strong>frente</strong> (analisada pela IA) e, se desejar, também a foto das <strong>costas</strong>.</p>
+                <div>
+                    <h3 class="font-bold text-white text-base">Cadastrar Camisa</h3>
+                    <p class="text-xs text-zinc-300">Escolha se a peça já faz parte da <strong>Coleção Real</strong> ou se vai para a <strong>Lista de Desejos</strong>.</p>
+                </div>
+
+                <!-- Seletor de destino -->
+                <div class="grid grid-cols-2 gap-2.5 bg-[#0f1712] p-1.5 rounded-2xl border border-[#2d5743]">
+                    <button type="button" id="btnDestinoColecao" onclick="selecionarDestinoCadastro('colecao')" class="py-2.5 px-3 rounded-xl text-xs font-extrabold bg-[#C8E84B] text-[#1B3B2B] transition">
+                        Coleção Real
+                    </button>
+                    <button type="button" id="btnDestinoDesejo" onclick="selecionarDestinoCadastro('desejo')" class="py-2.5 px-3 rounded-xl text-xs font-bold bg-transparent text-zinc-300 hover:text-white transition">
+                        Lista de Desejos
+                    </button>
+                </div>
+
+                <p id="dicaDestinoCadastro" class="text-xs text-emerald-300">
+                    Será salva na <strong>Coleção Real</strong> e contabilizada no resumo do acervo.
+                </p>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div onclick="document.getElementById('fileInputFrente').click()" class="border-2 border-dashed border-[#2d5743] hover:border-[#C8E84B] rounded-2xl p-4 text-center cursor-pointer bg-[#0f1712]/50 min-h-[140px] flex flex-col items-center justify-center">
                         <input type="file" id="fileInputFrente" accept="image/*" class="hidden" onchange="processarFotoFrente(event)">
                         <div id="previewFrente" class="flex flex-col items-center gap-1.5">
-                            <span class="text-xs font-bold text-[#C8E84B]">Foto da Frente *</span>
+                            <span id="labelFotoPrincipal" class="text-xs font-bold text-[#C8E84B]">Foto da Frente *</span>
                             <span class="text-[11px] text-zinc-400">Toque para enviar</span>
                         </div>
                     </div>
 
-                    <div onclick="document.getElementById('fileInputCostas').click()" class="border-2 border-dashed border-[#2d5743] hover:border-[#C8E84B] rounded-2xl p-4 text-center cursor-pointer bg-[#0f1712]/50 min-h-[140px] flex flex-col items-center justify-center">
+                    <div id="boxFotoCostasCadastro" onclick="document.getElementById('fileInputCostas').click()" class="border-2 border-dashed border-[#2d5743] hover:border-[#C8E84B] rounded-2xl p-4 text-center cursor-pointer bg-[#0f1712]/50 min-h-[140px] flex flex-col items-center justify-center">
                         <input type="file" id="fileInputCostas" accept="image/*" class="hidden" onchange="processarFotoCostas(event)">
                         <div id="previewCostas" class="flex flex-col items-center gap-1.5">
                             <span class="text-xs font-bold text-white">Foto das Costas</span>
@@ -239,17 +193,17 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs text-zinc-300 mb-1">Valor Estimado (R$)</label>
+                        <label id="labelValorCadastro" class="block text-xs text-zinc-300 mb-1">Valor Estimado (R$)</label>
                         <input type="number" step="0.01" id="market_value" value="250.00" class="w-full bg-[#0f1712] border border-[#2d5743] rounded-xl px-3 py-2.5 text-sm text-white">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs text-zinc-300 mb-1">História / Detalhes</label>
+                    <label id="labelHistoriaCadastro" class="block text-xs text-zinc-300 mb-1">História / Detalhes</label>
                     <input type="text" id="subtitle" placeholder="Ex: Patrocinador, patch ou conquista." class="w-full bg-[#0f1712] border border-[#2d5743] rounded-xl px-3 py-2.5 text-sm text-white">
                 </div>
 
-                <button type="submit" class="w-full bg-[#C8E84B] hover:bg-white text-[#1B3B2B] font-extrabold py-3.5 rounded-2xl transition text-sm">
+                <button type="submit" id="btnSalvarCadastro" class="w-full bg-[#C8E84B] hover:bg-white text-[#1B3B2B] font-extrabold py-3.5 rounded-2xl transition text-sm">
                     Salvar na Coleção
                 </button>
             </form>
@@ -420,6 +374,14 @@
         </div>
 
     </main>
+
+    <!-- BOTÃO REDONDO FLUTUANTE (+ NOVA) MAIOR, CENTRALIZADO E COM + NO EIXO -->
+    <button type="button" id="btnFabNova" onclick="abrirNovoCadastroRapido()" title="Adicionar camisa ou desejo" aria-label="Adicionar nova camisa" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 w-16 h-16 rounded-full bg-[#C8E84B] hover:bg-white active:scale-95 text-[#1B3B2B] shadow-2xl border-2 border-[#0f1712] flex items-center justify-center transition">
+        <svg class="w-8 h-8 block shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+    </button>
 
     <!-- MODAL DE DETALHES E EDIÇÃO -->
     <div id="modalDetalhes" onclick="fecharModalSeFundo(event)" style="display: none;" class="fixed inset-0 z-50 bg-black/80 items-center justify-center p-4 overflow-y-auto">
@@ -593,6 +555,8 @@
         let listaDesejosExibida = [];
         let camisaSelecionada = null;
         let desejoSelecionado = null;
+        let destinoCadastroAtual = 'colecao'; // 'colecao' | 'desejo'
+        let abaAtivaAtual = 'colecao';
         let fotoFrenteAtual = '';
         let fotoCostasAtual = '';
         let usuarioLogado = null;
@@ -607,6 +571,58 @@
         let arrastoInicioX = 0;
         let arrastoInicioY = 0;
         let moveuNoArrasto = false;
+
+        function atualizarVisibilidadeFab(aba) {
+            const fab = document.getElementById('btnFabNova');
+            if (!fab) return;
+            if (aba === 'nova') {
+                fab.classList.add('hidden');
+            } else {
+                fab.classList.remove('hidden');
+            }
+        }
+
+        function abrirNovoCadastroRapido() {
+            selecionarDestinoCadastro(abaAtivaAtual === 'desejos' ? 'desejo' : 'colecao');
+            mudarAba('nova');
+        }
+
+        function selecionarDestinoCadastro(destino) {
+            destinoCadastroAtual = destino === 'desejo' ? 'desejo' : 'colecao';
+            const btnColecao = document.getElementById('btnDestinoColecao');
+            const btnDesejo = document.getElementById('btnDestinoDesejo');
+            const dica = document.getElementById('dicaDestinoCadastro');
+            const labelFoto = document.getElementById('labelFotoPrincipal');
+            const labelValor = document.getElementById('labelValorCadastro');
+            const labelHistoria = document.getElementById('labelHistoriaCadastro');
+            const btnSalvar = document.getElementById('btnSalvarCadastro');
+
+            const ativoCls = "py-2.5 px-3 rounded-xl text-xs font-extrabold bg-[#C8E84B] text-[#1B3B2B] transition";
+            const inativoCls = "py-2.5 px-3 rounded-xl text-xs font-bold bg-transparent text-zinc-300 hover:text-white transition";
+
+            if (destinoCadastroAtual === 'desejo') {
+                btnColecao.className = inativoCls;
+                btnDesejo.className = ativoCls;
+                dica.innerHTML = 'Será salva na <strong>Lista de Desejos</strong> (frente e costas opcionais), separada da coleção real.';
+                labelFoto.textContent = 'Foto da Frente';
+                labelValor.textContent = 'Valor-Alvo (R$)';
+                labelHistoria.textContent = 'Observações do Garimpo';
+                btnSalvar.textContent = 'Salvar na Lista de Desejos';
+            } else {
+                btnColecao.className = ativoCls;
+                btnDesejo.className = inativoCls;
+                dica.innerHTML = 'Será salva na <strong>Coleção Real</strong> e contabilizada no resumo do acervo.';
+                labelFoto.textContent = 'Foto da Frente *';
+                labelValor.textContent = 'Valor Estimado (R$)';
+                labelHistoria.textContent = 'História / Detalhes';
+                btnSalvar.textContent = 'Salvar na Coleção';
+            }
+        }
+
+        function abrirNovoCadastroParaDesejo() {
+            selecionarDestinoCadastro('desejo');
+            mudarAba('nova');
+        }
 
         function aplicarTransformacaoZoom() {
             const img = document.getElementById('zoomImagem');
@@ -679,8 +695,8 @@
             const srcAtual = document.getElementById('detImagem').src;
             if (!srcAtual) return;
 
-            const ehCostas = !desejoSelecionado && Boolean(fotoCostasAtual) && srcAtual === fotoCostasAtual;
-            document.getElementById('zoomLadoLabel').textContent = desejoSelecionado ? 'Desejo' : (ehCostas ? 'Costas' : 'Frente');
+            const ehCostas = Boolean(fotoCostasAtual) && srcAtual === fotoCostasAtual;
+            document.getElementById('zoomLadoLabel').textContent = ehCostas ? 'Costas' : 'Frente';
             document.getElementById('zoomImagem').src = srcAtual;
             resetarZoom();
             document.getElementById('modalZoomFoto').style.display = 'flex';
@@ -714,11 +730,14 @@
         }
 
         function mudarAba(aba) {
+            abaAtivaAtual = aba;
             document.getElementById('abaColecao').classList.add('hidden');
             document.getElementById('abaDesejos').classList.add('hidden');
             document.getElementById('abaNova').classList.add('hidden');
             document.getElementById('abaUsuario').classList.add('hidden');
             document.getElementById('abaConfig').classList.add('hidden');
+
+            atualizarVisibilidadeFab(aba);
 
             if (aba === 'colecao') {
                 document.getElementById('abaColecao').classList.remove('hidden');
@@ -728,6 +747,7 @@
                 carregarDesejos();
             } else if (aba === 'nova') {
                 document.getElementById('abaNova').classList.remove('hidden');
+                selecionarDestinoCadastro(destinoCadastroAtual);
             } else if (aba === 'usuario') {
                 document.getElementById('abaUsuario').classList.remove('hidden');
                 sincronizarEstadoAbaUsuario();
@@ -1061,6 +1081,24 @@
             };
         }
 
+        function separarDadosDesejo(desejo) {
+            const rawNotes = desejo.notes || '';
+            const marcador = '||COSTAS:';
+            const idx = rawNotes.indexOf(marcador);
+            if (idx !== -1) {
+                return {
+                    observacoes: rawNotes.slice(0, idx).trim(),
+                    frenteUrl: desejo.image_url || DEFAULT_JERSEY_IMG,
+                    costasUrl: rawNotes.slice(idx + marcador.length).trim()
+                };
+            }
+            return {
+                observacoes: rawNotes,
+                frenteUrl: desejo.image_url || DEFAULT_JERSEY_IMG,
+                costasUrl: ''
+            };
+        }
+
         async function carregarCamisas() {
             if (!supabaseClient) return;
 
@@ -1167,114 +1205,23 @@
             }
 
             grid.innerHTML = desejos.map((d, idx) => {
-                const fotoUrl = d.image_url || DEFAULT_JERSEY_IMG;
+                const info = separarDadosDesejo(d);
+                const temCostas = Boolean(info.costasUrl);
                 return `
                     <div onclick="abrirDetalhesDesejoPorIndice(${idx})" role="button" tabindex="0" class="bg-[#163022] border border-[#2d5743] rounded-3xl p-4 flex items-center space-x-4 shadow-md hover:border-[#C8E84B] transition cursor-pointer">
-                        <img src="${fotoUrl}" class="w-20 h-20 object-cover rounded-2xl bg-zinc-800 border border-[#2d5743] shrink-0" alt="Desejo">
+                        <img src="${info.frenteUrl}" class="w-20 h-20 object-cover rounded-2xl bg-zinc-800 border border-[#2d5743] shrink-0" alt="Desejo">
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center justify-between gap-2">
-                                <span class="text-[10px] font-bold uppercase text-[#C8E84B] bg-[#254837] px-2 py-0.5 rounded-md truncate">Desejo • ${d.kit_type || 'Titular'} • ${d.season}</span>
+                                <span class="text-[10px] font-bold uppercase text-[#C8E84B] bg-[#254837] px-2 py-0.5 rounded-md truncate">Desejo • ${d.kit_type || 'Titular'} • ${d.season}${temCostas ? ' • 2 Fotos' : ''}</span>
                                 <span class="text-xs font-bold text-[#C8E84B] shrink-0">Alvo R$ ${Number(d.target_value || 0).toFixed(2)}</span>
                             </div>
                             <h4 class="font-extrabold text-white text-base truncate mt-1">${d.team_name}</h4>
-                            <p class="text-xs text-zinc-400 truncate mt-0.5">${d.notes || d.supplier || 'Toque para ver detalhes'}</p>
+                            <p class="text-xs text-zinc-400 truncate mt-0.5">${info.observacoes || d.supplier || 'Toque para ver detalhes'}</p>
                         </div>
                         <span class="text-zinc-400 text-base shrink-0">›</span>
                     </div>
                 `;
             }).join('');
-        }
-
-        async function processarFotoDesejo(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                const base64Original = e.target.result;
-                document.getElementById('previewDesejo').innerHTML = `
-                    <img src="${base64Original}" class="w-20 h-20 object-cover rounded-2xl mx-auto border border-[#C8E84B]">
-                    <span class="text-[11px] font-bold text-[#C8E84B]">Referência carregada!</span>
-                `;
-
-                const aiKey = (localStorage.getItem('acervo_ai_key') || '').replace(/[^\x20-\x7E]/g, '').trim();
-                const statusEl = document.getElementById('statusIADesejo');
-                if (!aiKey) return;
-
-                statusEl.classList.remove('hidden');
-                statusEl.textContent = "Identificando camisa desejada com IA...";
-
-                try {
-                    const resultado = await identificarCamisaComIA(base64Original, aiKey);
-                    if (resultado.team_name && !document.getElementById('wish_team_name').value) {
-                        document.getElementById('wish_team_name').value = resultado.team_name;
-                    }
-                    if (resultado.season && !document.getElementById('wish_season').value) {
-                        document.getElementById('wish_season').value = resultado.season;
-                    }
-                    if (resultado.supplier && !document.getElementById('wish_supplier').value) {
-                        document.getElementById('wish_supplier').value = resultado.supplier;
-                    }
-                    if (resultado.subtitle && !document.getElementById('wish_notes').value) {
-                        document.getElementById('wish_notes').value = resultado.subtitle;
-                    }
-                    const tiposValidos = ['Titular', 'Reserva', 'Terceira', 'Especial'];
-                    if (tiposValidos.includes(resultado.kit_type)) {
-                        document.getElementById('wish_kit_type').value = resultado.kit_type;
-                    }
-                    statusEl.textContent = "Dados sugeridos pela IA! Confira antes de salvar.";
-                } catch (err) {
-                    statusEl.textContent = "IA não identificou automaticamente. Preencha manualmente.";
-                }
-            };
-            reader.readAsDataURL(file);
-        }
-
-        async function salvarDesejo(event) {
-            event.preventDefault();
-            if (!supabaseClient) {
-                alert("Configure o Supabase na aba Conexão primeiro.");
-                mudarAba('config');
-                return;
-            }
-
-            const btn = document.getElementById('btnSalvarDesejo');
-            btn.disabled = true;
-            btn.textContent = "Salvando...";
-
-            try {
-                let imageUrl = DEFAULT_JERSEY_IMG;
-                const fileDesejo = document.getElementById('fileInputDesejo').files[0];
-                if (fileDesejo) {
-                    imageUrl = await enviarArquivoStorage(fileDesejo, 'desejo');
-                }
-
-                const novoDesejo = {
-                    team_name: document.getElementById('wish_team_name').value.trim(),
-                    season: document.getElementById('wish_season').value.trim(),
-                    kit_type: document.getElementById('wish_kit_type').value,
-                    supplier: document.getElementById('wish_supplier').value.trim(),
-                    size: document.getElementById('wish_size').value,
-                    target_value: parseFloat(document.getElementById('wish_target_value').value) || 0,
-                    notes: document.getElementById('wish_notes').value.trim(),
-                    image_url: imageUrl
-                };
-
-                const { error } = await supabaseClient.from('wishlist').insert([novoDesejo]);
-                if (error) throw new Error(error.message);
-
-                alert("Camisa adicionada à lista de Desejos!");
-                document.getElementById('formDesejo').reset();
-                document.getElementById('fileInputDesejo').value = '';
-                document.getElementById('statusIADesejo').classList.add('hidden');
-                document.getElementById('previewDesejo').innerHTML = `<span class="text-xs font-bold text-[#C8E84B]">Foto de Referência (Opcional)</span><span class="text-[11px] text-zinc-400">Toque para escolher ou identificar com IA</span>`;
-                await carregarDesejos();
-            } catch (err) {
-                alert("Erro ao salvar desejo: " + err.message);
-            } finally {
-                btn.disabled = false;
-                btn.textContent = "Salvar na Lista de Desejos";
-            }
         }
 
         function abrirDetalhesDesejoPorIndice(idx) {
@@ -1283,18 +1230,20 @@
 
             camisaSelecionada = null;
             desejoSelecionado = desejo;
-            fotoFrenteAtual = desejo.image_url || DEFAULT_JERSEY_IMG;
-            fotoCostasAtual = '';
+            const info = separarDadosDesejo(desejo);
+            fotoFrenteAtual = info.frenteUrl;
+            fotoCostasAtual = info.costasUrl;
 
             document.getElementById('detImagem').src = fotoFrenteAtual;
             document.getElementById('detBadge').textContent = `Desejo • ${desejo.kit_type || 'Titular'} • ${desejo.season}`;
             document.getElementById('detValor').textContent = `Alvo R$ ${Number(desejo.target_value || 0).toFixed(2)}`;
             document.getElementById('detClube').textContent = desejo.team_name || '';
-            document.getElementById('detHistoria').textContent = desejo.notes || 'Camisa marcada na lista de desejos.';
+            document.getElementById('detHistoria').textContent = info.observacoes || 'Camisa marcada na lista de desejos.';
             document.getElementById('detFornecedora').textContent = desejo.supplier || 'Não informada';
             document.getElementById('detTamanho').textContent = desejo.size || 'Não informado';
 
-            document.getElementById('barraLadosModal').classList.add('hidden');
+            document.getElementById('barraLadosModal').classList.remove('hidden');
+            atualizarBotoesLado();
             document.getElementById('btnEditarCamisa').classList.add('hidden');
             document.getElementById('btnMoverParaColecao').classList.remove('hidden');
             document.getElementById('btnExcluirCamisa').onclick = () => excluirDesejo(desejo.id);
@@ -1327,6 +1276,11 @@
             btn.textContent = "Movendo...";
 
             try {
+                const info = separarDadosDesejo(desejoSelecionado);
+                const subtitleFinal = info.costasUrl
+                    ? `${info.observacoes || 'Conquistado da lista de desejos'}||COSTAS:${info.costasUrl}`
+                    : (info.observacoes || 'Conquistado da lista de desejos');
+
                 const novaPeca = {
                     team_name: desejoSelecionado.team_name,
                     season: desejoSelecionado.season,
@@ -1334,8 +1288,8 @@
                     supplier: desejoSelecionado.supplier || '',
                     size: desejoSelecionado.size || 'G',
                     market_value: Number(desejoSelecionado.target_value || 0),
-                    subtitle: desejoSelecionado.notes || 'Conquistado da lista de desejos',
-                    image_url: desejoSelecionado.image_url || DEFAULT_JERSEY_IMG
+                    subtitle: subtitleFinal,
+                    image_url: info.frenteUrl || DEFAULT_JERSEY_IMG
                 };
 
                 const { error: insertError } = await supabaseClient.from('jerseys').insert([novaPeca]);
@@ -1620,7 +1574,7 @@
                 const base64Original = e.target.result;
                 document.getElementById('previewFrente').innerHTML = `
                     <img src="${base64Original}" class="w-20 h-20 object-cover rounded-2xl mx-auto border border-[#C8E84B]">
-                    <span class="text-[11px] font-bold text-[#C8E84B]">Frente carregada!</span>
+                    <span class="text-[11px] font-bold text-[#C8E84B]">Foto carregada!</span>
                 `;
 
                 const aiKey = (localStorage.getItem('acervo_ai_key') || '').replace(/[^\x20-\x7E]/g, '').trim();
@@ -1672,6 +1626,16 @@
             return publicUrlData.publicUrl;
         }
 
+        function resetarFormularioCadastro() {
+            document.getElementById('formCamisa').reset();
+            document.getElementById('fileInputFrente').value = '';
+            document.getElementById('fileInputCostas').value = '';
+            document.getElementById('statusIA').classList.add('hidden');
+            document.getElementById('previewFrente').innerHTML = `<span id="labelFotoPrincipal" class="text-xs font-bold text-[#C8E84B]">Foto da Frente *</span><span class="text-[11px] text-zinc-400">Toque para enviar</span>`;
+            document.getElementById('previewCostas').innerHTML = `<span class="text-xs font-bold text-white">Foto das Costas</span><span class="text-[11px] text-zinc-400">Opcional</span>`;
+            selecionarDestinoCadastro('colecao');
+        }
+
         async function salvarCamisa(event) {
             event.preventDefault();
             if (!supabaseClient) {
@@ -1680,48 +1644,85 @@
                 return;
             }
 
-            let imageUrl = DEFAULT_JERSEY_IMG;
-            let backImageUrl = '';
+            const btn = document.getElementById('btnSalvarCadastro');
+            btn.disabled = true;
+            btn.textContent = "Salvando...";
 
             try {
+                let imageUrl = DEFAULT_JERSEY_IMG;
+                let backImageUrl = '';
+
                 const fileFrente = document.getElementById('fileInputFrente').files[0];
-                if (fileFrente) imageUrl = await enviarArquivoStorage(fileFrente, 'frente');
+                if (fileFrente) {
+                    imageUrl = await enviarArquivoStorage(fileFrente, destinoCadastroAtual === 'desejo' ? 'desejo_frente' : 'frente');
+                }
 
                 const fileCostas = document.getElementById('fileInputCostas').files[0];
-                if (fileCostas) backImageUrl = await enviarArquivoStorage(fileCostas, 'costas');
+                if (fileCostas) {
+                    backImageUrl = await enviarArquivoStorage(fileCostas, destinoCadastroAtual === 'desejo' ? 'desejo_costas' : 'costas');
+                }
+
+                const teamName = document.getElementById('team_name').value.trim();
+                const season = document.getElementById('season').value.trim();
+                const kitType = document.getElementById('kit_type').value;
+                const supplier = document.getElementById('supplier').value.trim();
+                const size = document.getElementById('size').value;
+                const valorNumerico = parseFloat(document.getElementById('market_value').value) || 0;
+                const historiaDigitada = document.getElementById('subtitle').value.trim();
+
+                if (destinoCadastroAtual === 'desejo') {
+                    const notesFinal = backImageUrl ? `${historiaDigitada}||COSTAS:${backImageUrl}` : historiaDigitada;
+                    const novoDesejo = {
+                        team_name: teamName,
+                        season: season,
+                        kit_type: kitType,
+                        supplier: supplier,
+                        size: size,
+                        target_value: valorNumerico,
+                        notes: notesFinal,
+                        image_url: imageUrl
+                    };
+
+                    const { error } = await supabaseClient.from('wishlist').insert([novoDesejo]);
+                    if (error) throw new Error(error.message);
+
+                    alert("Camisa adicionada à Lista de Desejos!");
+                    resetarFormularioCadastro();
+                    mudarAba('desejos');
+                } else {
+                    const subtitleFinal = backImageUrl ? `${historiaDigitada}||COSTAS:${backImageUrl}` : historiaDigitada;
+                    const novaPeca = {
+                        team_name: teamName,
+                        season: season,
+                        kit_type: kitType,
+                        supplier: supplier,
+                        size: size,
+                        market_value: valorNumerico,
+                        subtitle: subtitleFinal,
+                        image_url: imageUrl
+                    };
+
+                    const { error } = await supabaseClient.from('jerseys').insert([novaPeca]);
+                    if (error) throw new Error(error.message);
+
+                    alert("Camisa salva com sucesso no ACERVO!");
+                    resetarFormularioCadastro();
+                    mudarAba('colecao');
+                }
             } catch (err) {
-                alert("Erro ao enviar foto para o Storage: " + err.message);
-                return;
+                alert("Erro ao salvar: " + err.message);
+            } finally {
+                btn.disabled = false;
+                selecionarDestinoCadastro(destinoCadastroAtual);
             }
+        }
 
-            const historiaDigitada = document.getElementById('subtitle').value.trim();
-            const subtitleFinal = backImageUrl ? `${historiaDigitada}||COSTAS:${backImageUrl}` : historiaDigitada;
-
-            const novaPeca = {
-                team_name: document.getElementById('team_name').value,
-                season: document.getElementById('season').value,
-                kit_type: document.getElementById('kit_type').value,
-                supplier: document.getElementById('supplier').value,
-                size: document.getElementById('size').value,
-                market_value: parseFloat(document.getElementById('market_value').value) || 0,
-                subtitle: subtitleFinal,
-                image_url: imageUrl
-            };
-
-            const { error } = await supabaseClient.from('jerseys').insert([novaPeca]);
-            if (error) {
-                alert("Erro ao salvar no banco: " + error.message);
-                return;
-            }
-
-            alert("Camisa salva com sucesso no ACERVO!");
-            document.getElementById('formCamisa').reset();
-            document.getElementById('fileInputFrente').value = '';
-            document.getElementById('fileInputCostas').value = '';
-            document.getElementById('statusIA').classList.add('hidden');
-            document.getElementById('previewFrente').innerHTML = `<span class="text-xs font-bold text-[#C8E84B]">Foto da Frente *</span><span class="text-[11px] text-zinc-400">Toque para enviar</span>`;
-            document.getElementById('previewCostas').innerHTML = `<span class="text-xs font-bold text-white">Foto das Costas</span><span class="text-[11px] text-zinc-400">Opcional</span>`;
-            mudarAba('colecao');
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch((err) => {
+                    console.warn('Falha ao registrar Service Worker:', err);
+                });
+            });
         }
 
         iniciarApp();
